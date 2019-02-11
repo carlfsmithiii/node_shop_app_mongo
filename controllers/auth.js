@@ -1,4 +1,5 @@
 const parseCookies = require("../util/parseCookies");
+const User = require("../models/user");
 
 exports.getLogin = (req, res, next) => {
   const isLoggedIn = parseCookies(req.get("Cookie")).loggedIn;
@@ -12,6 +13,11 @@ exports.getLogin = (req, res, next) => {
 
 exports.postLogin = (req, res, next) => {
   // res.setHeader("Set-Cookie", "loggedIn=true; HttpOnly");
-  req.session.isLoggedIn = true;
-  res.redirect("/");
+  User.findById("5c5b51f129eca91a8d7d386d")
+    .then(user => {
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      res.redirect("/");
+    })
+    .catch(err => console.log(err));
 };
