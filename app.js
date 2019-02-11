@@ -54,18 +54,6 @@ app.use(errorController.get404);
 mongoose
   .connect(process.env.SCHWARZ_NODE_MONGO_URL, { useNewUrlParser: true })
   .then(() => {
-    User.findOne().then(user => {
-      if (!user) {
-        user = new User({
-          name: "Max",
-          email: "max@test.com",
-          cart: {
-            items: []
-          }
-        });
-        user.save();
-      }
-    });
     app.listen(3000);
   })
   .catch(err => console.log(err));
