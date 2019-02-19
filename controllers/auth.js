@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+
 const parseCookies = require("../util/parseCookies");
 const User = require("../models/user");
 
@@ -42,7 +44,14 @@ exports.postSignup = (req, res, next) => {
       if (userDoc) {
         return res.redirect("/signup");
       }
-      const user = new User({ email, password, cart: { items: [] } });
+      return bcrypt.hash(password, 12);
+    })
+    .then(hashedPassword => {
+      const user = new User({
+        email,
+        password: hashedPassword,
+        cart: { items: [] }
+      });
       return user.save();
     })
     .then(result => {
