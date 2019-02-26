@@ -4,20 +4,23 @@ const parseCookies = require("../util/parseCookies");
 const User = require("../models/user");
 
 exports.getLogin = (req, res, next) => {
-  const isLoggedIn = parseCookies(req.get("Cookie")).loggedIn;
-  console.log(isLoggedIn);
+  let message = req.flash("error");
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
-    isAuthenticated: isLoggedIn
+    errorMessage: message
   });
 };
 
 exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     path: "/signup",
-    pageTitle: "Signup",
-    isAuthenticated: false
+    pageTitle: "Signup"
   });
 };
 
@@ -26,6 +29,7 @@ exports.postLogin = (req, res, next) => {
   const password = req.body.password;
   User.findOne({ email }).then(user => {
     if (!user) {
+      req.flash("error", "Invalid email or password.");
       return res.redirect("/login");
     }
     bcrypt
